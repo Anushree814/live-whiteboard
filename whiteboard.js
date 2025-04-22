@@ -12,8 +12,13 @@ colorPicker.addEventListener("input", (event) => {
   setColor(event.target.value);
   colorPickerLabel.style.backgroundColor = event.target.value;
 });
-
-let socket = new WebSocket("ws://localhost:8080", "echo-protocol");
+const isLocalhost =
+  window.location.hostname === "localhost" ||
+  window.location.hostname === "127.0.0.1";
+const socketUrl = isLocalhost
+  ? "ws://localhost:3000"
+  : "https://gigantic-pricey-axolotl.glitch.me/"; 
+let socket = new WebSocket(socketUrl);
 
 canvas.addEventListener("mousedown", startDrawing);
 canvas.addEventListener("mouseup", stopDrawing);
@@ -26,7 +31,7 @@ socket.onclose = () => {
 };
 
 function initializeWebSocket() {
-  socket = new WebSocket("ws://localhost:8080");
+  socket = new WebSocket(socketUrl);
 }
 socket.addEventListener("open", () => {
   console.log("WebSocket connection opened");
