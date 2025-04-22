@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Live Collaboration Whiteboard</title>
+    <style>
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        flex-direction: column;
+      }
+      #container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      #canvas {
+        border: 1px solid black;
+      }
+      #toolbar {
+        margin-top: 10px;
+      }
+      .brush-cursor {
+        cursor: url("./assets/brush.png") 16 16, auto;
+      }
+
+      .eraser-cursor {
+        cursor: url("./assets/eraser.jpg") 16 16, auto;
+      }
+      #color-picker-label {
+        display: inline-block;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background-color: #000000;
+        border: 2px solid #ccc;
+        cursor: pointer;
+        vertical-align: middle;
+      }
+      #colorPicker {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="container">
+      <canvas id="canvas" width="800" height="600"></canvas>
+      <div id="toolbar">
+        <label for="colorPicker" id="color-picker-label"></label>
+        <input type="color" id="colorPicker" value="#000000" />
+        <button onclick="setTool('brush')" class="brush-cursor">Brush</button>
+        <button onclick="setTool('eraser')" class="eraser-cursor">
+          Eraser
+        </button>
+      </div>
+    </div>
+    <script src="whiteboard.js"></script>
+  </body>
+</html>
