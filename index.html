@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
@@ -25,14 +25,23 @@
       }
       #canvas {
         border: 1px solid black;
+        background-color: white;
+        border-radius: 0%;
       }
       #toolbar {
-        margin-top: 10px;
+        margin-top: 30px;
+      }
+      button {
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 0.8rem;
+      }
+      button:hover{
+         background-color: #95a5a6;
       }
       .brush-cursor {
         cursor: url("./assets/brush.png") 16 16, auto;
       }
-
       .eraser-cursor {
         cursor: url("./assets/eraser.jpg") 16 16, auto;
       }
@@ -49,6 +58,16 @@
       #colorPicker {
         display: none;
       }
+      .disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        background-color: #829091 !important;
+      }
+
+      .disabled:hover {
+        background-color: #829091 !important;
+        transform: none;
+      }
     </style>
   </head>
   <body>
@@ -61,6 +80,7 @@
         <button onclick="setTool('eraser')" class="eraser-cursor">
           Eraser
         </button>
+        <button onclick="clearCanvas()" id="clearButton" class="disabled">Clear</button>
       </div>
     </div>
     <script src="whiteboard.js"></script>

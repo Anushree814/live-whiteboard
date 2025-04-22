@@ -3,11 +3,14 @@ const ctx = canvas.getContext("2d");
 let drawing = false;
 let currentColor = "black";
 let currentTool = "brush";
+let canvasIsEmpty = true;
+let clearingFromRemote = false; 
+
 canvas.classList.remove("eraser-cursor");
 canvas.classList.add("brush-cursor");
 const colorPicker = document.getElementById("colorPicker");
 const colorPickerLabel = document.getElementById("color-picker-label");
-
+const clearButton = document.getElementById("clearButton");
 colorPicker.addEventListener("input", (event) => {
   setColor(event.target.value);
   colorPickerLabel.style.backgroundColor = event.target.value;
@@ -17,7 +20,7 @@ const isLocalhost =
   window.location.hostname === "127.0.0.1";
 const socketUrl = isLocalhost
   ? "ws://localhost:3000"
-  : "https://gigantic-pricey-axolotl.glitch.me/"; 
+  : "https://gigantic-pricey-axolotl.glitch.me/";
 let socket = new WebSocket(socketUrl);
 
 canvas.addEventListener("mousedown", startDrawing);
@@ -51,6 +54,9 @@ socket.onmessage = (event) => {
     if (data.start) {
       ctx.beginPath();
       ctx.moveTo(data.x, data.y);
+    } else if (data.clear) {
+      clearingFromRemote = true;
+      clearCanvas();
     } else {
       drawOnCanvas(data.x, data.y, data.color, data.tool);
     }
@@ -60,6 +66,8 @@ socket.onmessage = (event) => {
 
 function startDrawing(event) {
   drawing = true;
+  canvasIsEmpty = false;
+  updateClearButtonState();
   ctx.beginPath();
   const rect = canvas.getBoundingClientRect();
   const x = event.clientX - rect.left;
@@ -92,6 +100,8 @@ function draw(event) {
 }
 
 function drawOnCanvas(x, y, color, tool) {
+  canvasIsEmpty = false;
+  updateClearButtonState();
   if (tool === "eraser") {
     ctx.globalCompositeOperation = "destination-out";
     ctx.lineWidth = 10;
@@ -114,7 +124,6 @@ function setColor(color) {
 
 function setTool(tool) {
   currentTool = tool;
-  const canvas = document.getElementById("canvas");
 
   if (tool === "brush") {
     canvas.classList.remove("eraser-cursor");
@@ -124,3 +133,41 @@ function setTool(tool) {
     canvas.classList.add("eraser-cursor");
   }
 }
+
+function clearCanvas() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  canvasIsEmpty = true;
+  updateClearButtonState();
+  if (
+    !clearingFromRemote &&
+    typeof socket !== "undefined" &&
+    socket.readyState === WebSocket.OPEN
+  ) {
+    socket.send(
+      JSON.stringify({
+        clear: true,
+      })
+    );
+  }
+  clearingFromRemote = false;
+}
+
+function updateClearButtonState() {
+  if (canvasIsEmpty) {
+    clearButton.disabled = true;
+    clearButton.classList.add("disabled");
+  } else {
+    clearButton.disabled = false;
+    clearButton.classList.remove("disabled");
+  }
+}
+
+window.addEventListener("load", function () {
+  updateClearButtonState();
+});
+
+clearButton.addEventListener("click", function () {
+  if (!canvasIsEmpty) {
+    clearCanvas();
+  }
+});
